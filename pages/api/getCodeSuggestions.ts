@@ -10,7 +10,22 @@ const getCodeSuggestions = async (req: NextRequest): Promise<NextResponse> => {
     const { code } = await req.json();
 
     const payload = {
-      question: `Complete and review the following Solidity code: ${code}`,
+      question: `Complete and review the following Solidity code as if you are an expert smart contract researcher. 
+      Provide suggestions, Organize them into sections like:
+
+      // Code Suggestions
+      ...
+
+      // Best Code Practices
+      ...
+
+      // Gas Optimization Suggestions
+      ...
+
+      then provide reviewed code with the recommended changes (don't wrap code in comments).
+
+      Solidity code:
+      ${code}`,
       chat_history: [],
       knowledge_source_id: "clxqgkwcv002j60uvfw83gkby",
     };
@@ -24,7 +39,6 @@ const getCodeSuggestions = async (req: NextRequest): Promise<NextResponse> => {
       payload,
       { headers }
     );
-
     return NextResponse.json(response.data);
   } catch (error) {
     console.error("Error fetching suggestions:", error);
