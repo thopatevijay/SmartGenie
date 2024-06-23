@@ -11,3 +11,7 @@ export interface TranslateBody {
 export interface TranslateResponse {
   code: string;
 }
+
+export interface Prompt {
+  code: string
+}
