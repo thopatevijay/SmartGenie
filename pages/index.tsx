@@ -3,11 +3,15 @@ import Head from 'next/head';
 import { useState } from 'react';
 import axios from 'axios';
 
+type Suggestion = {
+  answer: string;
+};
+
 export default function Home() {
   const [code, setCode] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState<Suggestion | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<null | string>('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleCodeChange = (value: any) => {
     setError('');
@@ -35,7 +39,7 @@ export default function Home() {
     setError(null);
 
     try {
-      const response = await axios.post('/api/getCodeSuggestions', { code });
+      const response = await axios.post<Suggestion>('/api/getCodeSuggestions', { code });
       setSuggestions(response.data);
     } catch (error) {
       setError('Error fetching suggestions');
@@ -98,7 +102,7 @@ export default function Home() {
           <div className="mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
             <div className="text-center text-xl font-bold">Output</div>
             <div className="code-container">
-              <CodeBlock code={loading ? "Reviewing your code, hold tight ..." : suggestions?.answer} />
+              <CodeBlock code={loading ? "Reviewing your code, hold tight ..." : suggestions?.answer || ''} />
             </div>
           </div>
         </div>
