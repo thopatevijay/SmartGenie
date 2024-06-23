@@ -2,6 +2,8 @@ import { CodeBlock } from '@/components/CodeBlock';
 import Head from 'next/head';
 import { useState } from 'react';
 import axios from 'axios';
+import Link from 'next/link';
+import { FaGithub } from 'react-icons/fa';
 
 type Suggestion = {
   answer: string;
@@ -106,10 +108,20 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div className="notice" >
+          <p>
+            For those who want to know the secret sauce in our code review recipe, click here! <Link target="_blank" href="https://beta.flock.io/model/clxrgmu3a0021he5r7ka3vqg1">AI Bot Resources and Parameters</Link>
+          </p>
 
+        </div>
         <div className="mt-4 text-center text-sm text-white-700">
           This chatbot assists Solidity developers by providing code completions and review suggestions. It enhances productivity by suggesting code snippets, identifying potential errors, and offering best practices for writing secure and efficient Solidity contracts.
         </div>
+        <p className="mt-8">
+          <Link target="_blank" href="https://github.com/thopatevijay/solidity-co-pilots">
+            <FaGithub className="githubIcon" />
+          </Link>
+        </p>
       </div>
     </>
   );

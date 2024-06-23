@@ -3,7 +3,26 @@
 @tailwind utilities;
 
 .code-container {
-    height: 600px;
-    min-height: 600px;
-    overflow: auto;
-  }
+  height: 600px;
+  min-height: 600px;
+  overflow: auto;
+}
+.notice {
+  font-size: 1.2em;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 20px 0;
+  border: 1px solid #ccc;
+}
+.githubIcon {
+  font-size: 2em;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+.notice a {
+  color: #0070f3;
+  text-decoration: none;
+}
+.notice a:hover {
+  text-decoration: underline;
+}

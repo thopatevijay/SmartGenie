@@ -18,6 +18,9 @@ const getCodeSuggestions = async (req: NextRequest): Promise<NextResponse> => {
     
       // Best Code Practices
       ...
+
+      // Common Bugs detected
+      ...
     
       // Gas Optimization Suggestions
       ...
@@ -27,7 +30,7 @@ const getCodeSuggestions = async (req: NextRequest): Promise<NextResponse> => {
       Solidity code:
       ${code}`,
       chat_history: [],
-      knowledge_source_id: "clxqgkwcv002j60uvfw83gkby",
+      knowledge_source_id: "clxrgmu3a0021he5r7ka3vqg1",
     };
 
     const headers = {
