@@ -11,19 +11,19 @@ const getCodeSuggestions = async (req: NextRequest): Promise<NextResponse> => {
 
     const payload = {
       question: `Complete and review the following Solidity code as if you are an expert smart contract researcher. 
-      Provide suggestions, Organize them into sections like:
-
+      Provide suggestions and organize them into sections like:
+    
       // Code Suggestions
       ...
-
+    
       // Best Code Practices
       ...
-
+    
       // Gas Optimization Suggestions
       ...
-
-      then provide reviewed code with the recommended changes (don't wrap code in comments).
-
+    
+      Then provide the reviewed code with the recommended changes without wrapping the code in triple backticks or any markdown formatting.
+    
       Solidity code:
       ${code}`,
       chat_history: [],
