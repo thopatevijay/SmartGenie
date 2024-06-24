@@ -36,6 +36,11 @@ Use AI to review your Solidity code.
 - **AI Bot Resources and Parameters**: [AI Bot Link](https://beta.flock.io/model/clxrgmu3a0021he5r7ka3vqg1)
 - **Live Project**: [Live Project Link](https://solidity-co-pilots-9lms.vercel.app/)
 
+## Flow Diagram
+
+![Solidity Code Co-Pilots Flow Diagram](./public/flow-diagram.png)
+
+
 ## Future Enhancements / Coming Features
 
 - **Solidity Code Editor**: Integrate Monaco Editor for a seamless coding experience.
