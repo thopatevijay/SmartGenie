@@ -4,6 +4,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import { FaGithub } from 'react-icons/fa';
+import SolidityEditor from '@/components/SolidityEditor';
 
 type Suggestion = {
   answer: string;
@@ -92,9 +93,7 @@ export default function Home() {
           <div className="h-100 flex flex-col justify-center space-y-2 sm:w-2/4">
             <div className="text-center text-xl font-bold">Input</div>
             <div className="code-container">
-              <CodeBlock
-                code={code}
-                editable={!loading}
+              <SolidityEditor code={code}
                 onChange={(value: any) => {
                   handleCodeChange(value);
                 }}
@@ -104,7 +103,11 @@ export default function Home() {
           <div className="mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
             <div className="text-center text-xl font-bold">Output</div>
             <div className="code-container">
-              <CodeBlock code={loading ? "Reviewing your code, hold tight ..." : suggestions?.answer || ''} />
+              <SolidityEditor code={code}
+                onChange={(value: any) => {
+                  handleCodeChange(value);
+                }}
+              />
             </div>
           </div>
         </div>

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@codemirror/legacy-modes": "^6.3.2",
+    "@monaco-editor/react": "^4.6.0",
     "@uiw/codemirror-theme-tokyo-night": "^4.19.11",
     "@uiw/react-codemirror": "^4.19.11",
     "axios": "^1.7.2",
