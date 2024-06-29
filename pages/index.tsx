@@ -1,131 +1,76 @@
-import { CodeBlock } from '@/components/CodeBlock';
-import Head from 'next/head';
 import { useState } from 'react';
-import axios from 'axios';
-import Link from 'next/link';
-import { FaGithub } from 'react-icons/fa';
-import SolidityEditor from '@/components/SolidityEditor';
-
-type Suggestion = {
-  answer: string;
-};
+import Head from 'next/head';
 
 export default function Home() {
-  const [code, setCode] = useState('');
-  const [suggestions, setSuggestions] = useState<Suggestion | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleCodeChange = (value: any) => {
-    setError('');
-    setCode(value);
-  };
-
-  const isValidSolidityCode = (code: string) => {
-    const solidityPattern = /pragma solidity \^\d+\.\d+\.\d+;|contract\s+\w+\s*{|function\s+\w+\s*\(.*\)\s*(public|private|internal|external)?/;
-    return solidityPattern.test(code);
-  };
-
-
-  const fetchSuggestions = async () => {
-    if (!code) {
-      setError('Please enter some code.');
-      return;
-    }
-
-    if (!isValidSolidityCode(code)) {
-      setError('Please enter valid Solidity code.');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await axios.post<Suggestion>('/api/getCodeSuggestions', { code });
-      setSuggestions(response.data);
-    } catch (error) {
-      setError('Error fetching suggestions');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [activeTab, setActiveTab] = useState('Code Review');
 
   return (
-    <>
+    <div className="min-h-screen bg-darkbg text-neon font-mono flex flex-col">
       <Head>
-        <title>Solidity Code Co-pilots</title>
-        <meta
-          name="description"
-          content="Use AI to Complete and review the solidity code"
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>Solidity Co-Pilot</title>
       </Head>
-      <div className="flex h-full min-h-screen flex-col items-center bg-[#0E1117] px-4 pb-20 text-neutral-200 sm:px-10">
-        <div className="mt-10 flex flex-col items-center justify-center sm:mt-20">
-          <div className="text-4xl font-bold">Solidity Co-Pilots</div>
-        </div>
 
-        <div className="mt-2 flex items-center space-x-2">
+      <header className="flex justify-center py-4 border-b border-neon">
+        <h1 className="text-2xl">Solidity Co-Pilot</h1>
+      </header>
+
+      <main className="flex-1 flex flex-col p-4">
+        <div className="flex mb-4 border-b border-neon">
           <button
-            className="w-[240px] cursor-pointer rounded-md bg-violet-500 px-4 py-2 font-bold hover:bg-violet-600 active:bg-violet-700"
-            onClick={fetchSuggestions}
-            disabled={loading}
+            onClick={() => setActiveTab('Code Review')}
+            className={`px-4 py-2 focus:outline-none border-r border-neon ${
+              activeTab === 'Code Review' ? 'bg-darkfg' : ''
+            }`}
           >
-            {loading ? 'Loading...' : 'Get Code Suggestions'}
+            Code Review Tab
+          </button>
+          <button
+            onClick={() => setActiveTab('AI Agent')}
+            className={`px-4 py-2 focus:outline-none ${
+              activeTab === 'AI Agent' ? 'bg-darkfg' : ''
+            }`}
+          >
+            AI Agent Tab
           </button>
         </div>
 
-        <div className="mt-2 text-center text-xs">
-          {loading
-            ? ''
-            : 'Enter solidity code and click "Get Code Suggestions"'}
-        </div>
+        {activeTab === 'Code Review' ? (
+          <div className="flex-1 flex space-x-4">
+            {/* Input Section */}
+            <div className="flex-1 flex flex-col">
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-xl">Input</h2>
+                <button className="px-4 py-2 bg-darkfg text-neon border border-neon">Button A</button>
+              </div>
+              <textarea
+                className="flex-1 p-2 bg-darkfg text-neon border border-neon focus:outline-none"
+                placeholder="Enter your Solidity code here..."
+              ></textarea>
+            </div>
 
-        {error && (
-          <div className="mt-2 text-center text-xs text-red-600 bg-yellow-100 font-bold p-2 rounded">
-            {error}
+            {/* Output Section */}
+            <div className="flex-1 flex flex-col">
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-xl">Output</h2>
+                <div>
+                  <button className="px-4 py-2 bg-darkfg text-neon border border-neon mr-2">Button A</button>
+                  <button className="px-4 py-2 bg-darkfg text-neon border border-neon">Button A</button>
+                </div>
+              </div>
+              <textarea
+                className="flex-1 p-2 bg-darkfg text-neon border border-neon focus:outline-none"
+                placeholder="Output will be displayed here..."
+              ></textarea>
+            </div>
+          </div>
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <h2 className="text-xl mb-4">AI Agent Tab Content</h2>
+            {/* Add your AI Agent Tab content here */}
+            <p>This is where the AI Agent functionality would be displayed.</p>
           </div>
         )}
-
-        <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
-          <div className="h-100 flex flex-col justify-center space-y-2 sm:w-2/4">
-            <div className="text-center text-xl font-bold">Input</div>
-            <div className="code-container">
-              <SolidityEditor code={code}
-                onChange={(value: any) => {
-                  handleCodeChange(value);
-                }}
-              />
-            </div>
-          </div>
-          <div className="mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
-            <div className="text-center text-xl font-bold">Output</div>
-            <div className="code-container">
-              <SolidityEditor code={code}
-                onChange={(value: any) => {
-                  handleCodeChange(value);
-                }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="notice" >
-          <p>
-            For those who want to know the secret sauce in our code review recipe, click here! <Link target="_blank" href="https://beta.flock.io/model/clxrgmu3a0021he5r7ka3vqg1">AI Bot Resources and Parameters</Link>
-          </p>
-
-        </div>
-        <div className="mt-4 text-center text-sm text-white-700">
-          This chatbot assists Solidity developers by providing code completions and review suggestions. It enhances productivity by suggesting code snippets, identifying potential errors, and offering best practices for writing secure and efficient Solidity contracts.
-        </div>
-        <p className="mt-8">
-          <Link target="_blank" href="https://github.com/thopatevijay/solidity-co-pilots">
-            <FaGithub className="githubIcon" />
-          </Link>
-        </p>
-      </div>
-    </>
+      </main>
+    </div>
   );
 }

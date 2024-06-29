@@ -10,7 +10,7 @@ interface SolidityEditorProps {
 const SolidityEditor: React.FC<SolidityEditorProps> = ({ code, onChange, readOnly = false }) => {
     return (
         <MonacoEditor
-            height="40vh"
+            height="100%"
             defaultLanguage="sol"
             value={code}
             onChange={onChange}
