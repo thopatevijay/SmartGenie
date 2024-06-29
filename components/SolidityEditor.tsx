@@ -7,7 +7,7 @@ interface SolidityEditorProps {
     readOnly?: boolean;
 }
 
-const SolidityEditor: React.FC<SolidityEditorProps> = ({ code, onChange, readOnly = false }) => {
+export const SolidityEditor: React.FC<SolidityEditorProps> = ({ code, onChange, readOnly = false }) => {
     return (
         <MonacoEditor
             height="100%"
@@ -19,5 +19,3 @@ const SolidityEditor: React.FC<SolidityEditorProps> = ({ code, onChange, readOnl
         />
     );
 };
-
-export default SolidityEditor;
