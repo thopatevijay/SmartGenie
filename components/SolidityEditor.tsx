@@ -3,7 +3,7 @@ import MonacoEditor from '@monaco-editor/react';
 
 interface SolidityEditorProps {
     code: string;
-    onChange: (value: string | undefined) => void;
+    onChange?: (value: string | undefined) => void;
     readOnly?: boolean;
 }
 
