@@ -59,12 +59,12 @@ export const CodeReviewTab: React.FC<CodeReviewTabProps> = () => {
                 <div className="flex justify-between items-center mb-2">
                     <h2 className="text-xl">Output</h2>
                     <div>
-                        <button
+                        {/* <button
                             onClick={handleOpenModal}
                             className="px-4 py-2 bg-darkfg text-neon border border-neon mr-2"
                         >
                             See Code Diff
-                        </button>
+                        </button> */}
                         <button className="px-4 py-2 bg-darkfg text-neon border border-neon"
 
                         >Improve my code</button>

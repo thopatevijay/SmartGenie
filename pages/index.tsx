@@ -56,13 +56,13 @@ export default function Home() {
           >
             Get Code Review
           </button>
-          <button
+          {/* <button
             onClick={() => setActiveTab('AI Agent')}
             className={`px-4 py-2 focus:outline-none ${activeTab === 'AI Agent' ? 'bg-darkfg' : ''
               }`}
           >
             Create AI Agent
-          </button>
+          </button> */}
         </div>
 
         {activeTab === 'Code Review' ? (
