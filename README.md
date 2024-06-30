@@ -46,7 +46,7 @@ In Project Name, we have integrated a sophisticated LLM Loops Agent that enhance
 ## Links
 
 - **Live Project**: [Live Project Link](https://smart-genie.vercel.app/)
-- **Contract Address**: [0xC2d7B3Fa552c49cf4fb1d7FBD8c58cf41e34a5C8](https://explorer.galadriel.com/address/0xC2d7B3Fa552c49cf4fb1d7FBD8c58cf41e34a5C8)
+- **Contract Address**: [0xE43ea4bb5fb44C6cBD29573Df307991c7070BB03](https://explorer.galadriel.com/address/0xE43ea4bb5fb44C6cBD29573Df307991c7070BB03)
 
 ## Flow Diagram
 
