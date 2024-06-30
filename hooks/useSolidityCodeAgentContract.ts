@@ -11,9 +11,10 @@ type UseSolidityCodeAgentContract = {
     error: string | null;
     isErrorModalOpen: boolean;
     handleCloseErrorModal: () => void;
-    handleRunAgent: () => void;
+    handleRunAgent: (prompt: string, isImprovementPrompt: boolean) => void;
     setError: (error: string) => void;
     progressMessage: string;
+    setSuggestions: (suggestions: string | null) => void;
 };
 
 export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
@@ -81,39 +82,44 @@ export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
         return await contract?.isRunFinished(runId);
     }, [contract]);
 
-    const handleRunAgent = useCallback(async () => {
+    const handleRunAgent = useCallback(async (prompt: string, isImprovementPrompt: boolean) => {
         if (!wallet?.provider) {
             handleOpenErrorModal('Please connect your wallet');
+            return;
+        }
+        if (!prompt) {
+            handleOpenErrorModal('Please enter some code.');
             return;
         }
 
         const maxIterations = 2;
 
-        const query = `
-        Complete and review the following Solidity code as if you are an expert smart contract researcher. 
-      Provide suggestions and organize them into sections like:
-    
-      // Code Suggestions
-      ...
-    
-      // Best Code Practices
-      ...
+        const codeImprovementQuery = `
+        Please review and modify the following Solidity code as per the instructions provided within the comments marked with '@Genie:'. Only make changes where specified by these '@Genie' instructions. Do not alter any other parts of the code.
 
-      // Common Bugs detected
-      ...
-    
-      // Gas Optimization Suggestions
-      ...
-    
-      Then provide the reviewed code with the recommended changes without wrapping the code in triple backticks or any markdown formatting.
-    
-      Solidity code:
-        ${code}
-    `
-        if (!code) {
-            handleOpenErrorModal('Please enter some code.');
-            return;
-        }
+        Instructions:
+        ${prompt}
+
+        Solidity code:
+        ${suggestions}
+        `;
+
+        const codeReviewQuery = `
+            Please review the following Solidity code as an expert smart contract researcher. Your review should be detailed and organized into the following sections:
+                
+            1. **Code Improvement Suggestions**: Provide specific suggestions to improve the code quality.
+            2. **Best Practices**: Highlight the best practices that should be followed.
+            3. **Potential Bugs**: Identify any potential bugs in the code.
+            4. **Gas Optimization**: Suggest ways to optimize gas usage.
+                
+            After providing the feedback, include the revised version of the code with all recommended changes applied. Do not use any markdown formatting for the code.
+                
+            Solidity code:
+            ${prompt}
+            `;
+
+        const query = isImprovementPrompt ? codeImprovementQuery : codeReviewQuery;
+
 
         setLoading(true);
         setError(null);
@@ -148,7 +154,7 @@ export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
             setProgressMessage('');
         }
 
-    }, [code, getMessageHistoryContents, isRunFinished, messages, runAgent, wallet?.provider]);
+    }, [getMessageHistoryContents, isRunFinished, messages, runAgent, suggestions, wallet?.provider]);
 
 
     return {
@@ -162,5 +168,6 @@ export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
         handleRunAgent,
         setError,
         progressMessage,
+        setSuggestions,
     };
 }
