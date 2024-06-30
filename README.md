@@ -1,16 +1,17 @@
-# Solidity Code Co-Pilots
-
+<div align="center">
+<h1>SmartGenie</h1>
+  <img src="./public/logo.svg" alt="Project Icon" width="150" height="150">
+</div>
 Use AI to review your Solidity code.
 
-![Solidity Code Co-Pilots](./public/Solidity-Co-Pilots.png)
-
+![SmartGenie](./public/SmartGenieScreenShot.png)
 
 ## Running Locally
 
 1. **Clone Repo**
 
    ```bash
-   git clone https://github.com/thopatevijay/solidity-co-pilots.git
+   git clone https://github.com/thopatevijay/SmartGenie.git
    ```
 
 2. **Install Dependencies**
@@ -27,26 +28,35 @@ Use AI to review your Solidity code.
 ## Technical Stack
 
 - **Frontend**: Next.js
-- **Backend**: Node.js,
-- **AI Integration**: Flock's AI Co-Creation Platform
+- **AI Integration**: Galadriel's LLM Loops Agent
 - **Styling**: Tailwind CSS
+
+## LLM Loops Agent Integration
+
+In Project Name, we have integrated a sophisticated LLM Loops Agent that enhances our platform's capabilities by performing iterative querying and responding. The agent is configured to use tools like `web_search` and `code_interpreter` to provide real-time data retrieval and code analysis functionalities.
+
+### How It Works:
+
+1. **Initialization**: The agent is initialized with specific prompts and configurations to perform tasks related to Solidity smart contracts.
+2. **Tool Usage**:
+   - **web_search**: Used to fetch real-time data and best practices from the internet.
+   - **code_interpreter**: Executes Solidity code snippets for analysis and validation.
+3. **Iterative Process**: The agent performs multiple iterations to refine responses and provide the most accurate and relevant suggestions.
 
 ## Links
 
-- **AI Bot Resources and Parameters**: [AI Bot Link](https://beta.flock.io/model/clxrgmu3a0021he5r7ka3vqg1)
-- **Live Project**: [Live Project Link](https://solidity-co-pilots-9lms.vercel.app/)
+- **Live Project**: [Live Project Link](https://smart-genie.vercel.app/)
+- **Contract Address**: [0xC2d7B3Fa552c49cf4fb1d7FBD8c58cf41e34a5C8](https://explorer.galadriel.com/address/0xC2d7B3Fa552c49cf4fb1d7FBD8c58cf41e34a5C8)
 
 ## Flow Diagram
 
 ![Solidity Code Co-Pilots Flow Diagram](./public/flow-diagram.png)
 
-
 ## Future Enhancements / Coming Features
 
-- **Solidity Code Editor**: Integrate Monaco Editor for a seamless coding experience.
+- **Enhanced Analytics**: Advanced analytics dashboard to provide insights into smart contract performance and usage statistics.
 - **Code Suggestions**: Provide real-time code suggestions similar to GitHub Copilot.
 - **VS Code Extension**: Develop an extension for VS Code to integrate AI code reviews directly.
-- **User Accounts**: Add user account features to save and load code review history.
 - **Advanced AI Features**: Implement advanced AI algorithms for better code analysis and optimization suggestions.
 - **Collaboration Tools**: Enable real-time collaboration for teams working on Solidity projects.
 
