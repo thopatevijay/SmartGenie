@@ -1,64 +1,69 @@
 import React, { useState } from 'react';
 import { SolidityEditor } from '../SolidityEditor';
-import axios from 'axios';
 import { ErrorModal } from '../ErrorModal';
 import { CodeDiffModal } from '../CodeDiffModal';
-
-type Suggestion = {
-    answer: string;
-};
+import { useSolidityCodeAgentContract } from '@/hooks';
+import { codeImprovementEditorDefaultValue, codeReviewEditorDefaultValue } from '../../utils/editorDefaultValues';
 
 interface CodeReviewTabProps {
 }
 
 export const CodeReviewTab: React.FC<CodeReviewTabProps> = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [code, setCode] = useState('');
-    const [suggestions, setSuggestions] = useState<Suggestion | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-
-    const handleOpenErrorModal = (message: string) => {
-        setError(message);
-        setIsErrorModalOpen(true);
-    };
-
-    const handleCloseErrorModal = () => {
-        setIsErrorModalOpen(false);
-    };
+    const {
+        code,
+        setCode,
+        suggestions,
+        loading,
+        error,
+        isErrorModalOpen,
+        handleCloseErrorModal,
+        handleRunAgent,
+        setError,
+        progressMessage,
+        setSuggestions,
+        handleOpenErrorModal,
+    } = useSolidityCodeAgentContract();
 
     const handleCodeChange = (value: any) => {
         setError('');
         setCode(value);
     };
 
-    const fetchSuggestions = async () => {
-        if (!code) {
-            handleOpenErrorModal('Please enter some code.');
-            return;
-        }
-
-        setLoading(true);
-        setError(null);
-
-        try {
-            const response = await axios.post<Suggestion>('/api/getCodeSuggestions', { code });
-            setSuggestions(response.data);
-        } catch (error) {
-            console.error('Error fetching suggestions', error);
-            handleOpenErrorModal('Error fetching suggestions');
-        } finally {
-            setLoading(false);
-        }
-    };
-    const handleOpenModal = () => {
-        setIsModalOpen(true);
+    const handleOutputCodeChange = (value: any) => {
+        setError('');
+        setSuggestions(value);
     };
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
+
+    const extractGenieInstructions = (code: string | null): string[] => {
+        const regex = /\/\/\s*@Genie\s*:\s*(.*)/g;
+        const instructions = [];
+        let match;
+        if (code) {
+            while ((match = regex.exec(code)) !== null) {
+                instructions.push(match[1].trim());
+            }
+        }
+        return instructions;
+    };
+
+    const handleImprovement = () => {
+        const instructions = extractGenieInstructions(suggestions);
+
+        if (instructions.length === 0) {
+            handleOpenErrorModal('No @Genie instructions found in the code. Tag @Genie with your wishes, and watch the magic happen!');
+            return;
+        }
+
+        const instructionText = instructions.map((instruction, index) => `${index + 1}. ${instruction}`).join('\n');
+
+        handleRunAgent(instructionText, true);
+
+    }
     return (
         <div className="flex-1 flex space-x-4">
             {/* Input Section */}
@@ -66,15 +71,20 @@ export const CodeReviewTab: React.FC<CodeReviewTabProps> = () => {
                 <div className="flex justify-between items-center mb-2">
                     <h2 className="text-xl">Input</h2>
                     <button className="px-4 py-2 bg-darkfg text-neon border border-neon"
-                        onClick={fetchSuggestions}
-                        disabled={loading}>
+                        disabled={loading}
+                        onClick={() => handleRunAgent(code, false)}
+                    >
                         {loading ? 'Loading...' : 'Review My Code'}
                     </button>
                 </div>
                 <div
                     className="flex-1 p-2 bg-darkfg text-neon border border-neon focus:outline-none"
                 >
-                    <SolidityEditor code={code} onChange={handleCodeChange} />
+                    <SolidityEditor
+                        code={code}
+                        onChange={handleCodeChange}
+                        defaultValue={codeReviewEditorDefaultValue}
+                    />
                 </div>
             </div>
 
@@ -83,19 +93,28 @@ export const CodeReviewTab: React.FC<CodeReviewTabProps> = () => {
                 <div className="flex justify-between items-center mb-2">
                     <h2 className="text-xl">Output</h2>
                     <div>
-                        <button
+                        {/* <button
                             onClick={handleOpenModal}
                             className="px-4 py-2 bg-darkfg text-neon border border-neon mr-2"
                         >
                             See Code Diff
+                        </button> */}
+                        <button className="px-4 py-2 bg-darkfg text-neon border border-neon"
+                            onClick={handleImprovement}
+                            disabled={loading}
+                        >
+                            {loading ? 'Loading...' : 'Improve my code'}
                         </button>
-                        <button className="px-4 py-2 bg-darkfg text-neon border border-neon">Improve my code</button>
                     </div>
                 </div>
                 <div
                     className="flex-1 p-2 bg-darkfg text-neon border border-neon focus:outline-none"
                 >
-                    <SolidityEditor code={loading ? "Reviewing your code, hold tight ..." : suggestions?.answer ?? ''} />
+                    <SolidityEditor
+                        code={loading ? progressMessage : suggestions ?? ''}
+                        onChange={handleOutputCodeChange}
+                        defaultValue={codeImprovementEditorDefaultValue}
+                    />
                 </div>
             </div>
             <ErrorModal isModalOpen={isErrorModalOpen} handleCloseModal={handleCloseErrorModal} errorMessage={error} />
