@@ -4,11 +4,13 @@ import { ErrorModal } from '../ErrorModal';
 import { CodeDiffModal } from '../CodeDiffModal';
 import { useSolidityCodeAgentContract } from '@/hooks';
 import { codeImprovementEditorDefaultValue, codeReviewEditorDefaultValue } from '../../utils/editorDefaultValues';
+import { useConnectWallet } from '@web3-onboard/react';
 
 interface CodeReviewTabProps {
 }
 
 export const CodeReviewTab: React.FC<CodeReviewTabProps> = () => {
+    const [{ wallet }] = useConnectWallet()
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {
         code,
@@ -52,6 +54,10 @@ export const CodeReviewTab: React.FC<CodeReviewTabProps> = () => {
     };
 
     const handleImprovement = () => {
+        if (!wallet?.provider) {
+            handleOpenErrorModal('Please connect your wallet');
+            return;
+        }
         const instructions = extractGenieInstructions(suggestions);
 
         if (instructions.length === 0) {
