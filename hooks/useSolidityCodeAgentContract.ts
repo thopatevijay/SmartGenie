@@ -100,7 +100,7 @@ export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
             return;
         }
 
-        const maxIterations = 2;
+        const maxIterations = 10;
 
         const codeImprovementQuery = `
         Please review and modify the following Solidity code as per the instructions provided within the comments marked with '@Genie:'. Only make changes where specified by these '@Genie' instructions. Do not alter any other parts of the code.
