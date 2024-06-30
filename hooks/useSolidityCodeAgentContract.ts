@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import { ethers } from 'ethers';
 import SolidityCodeAgentABI from '../utils/SolidityCodeAgentABI.json';
 import { useConnectWallet } from '@web3-onboard/react';
-import { WalletState } from "@web3-onboard/core/dist/types";
 
 type UseSolidityCodeAgentContract = {
     code: string;
@@ -14,6 +13,7 @@ type UseSolidityCodeAgentContract = {
     handleCloseErrorModal: () => void;
     handleRunAgent: () => void;
     setError: (error: string) => void;
+    progressMessage: string;
 };
 
 export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
@@ -23,8 +23,16 @@ export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
     const [error, setError] = useState<string | null>(null);
     const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
     const [{ wallet, connecting }, connect] = useConnectWallet()
-    const [wallets, setWallets] = useState<WalletState>();
     const [ethersProvider, setProvider] = useState<ethers.providers.Web3Provider | null>();
+    const [progressMessage, setProgressMessage] = useState<string>('');
+
+    const messages = useMemo(() => [
+        'Analyzing your code...',
+        'Identifying code improvement suggestions...',
+        'Evaluating best coding practices...',
+        'Inspecting for potential bugs...',
+        'Optimizing gas usage...',
+    ], []);
 
     const handleOpenErrorModal = (message: string) => {
         setError(message);
@@ -38,7 +46,6 @@ export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
     useEffect(() => {
         if (wallet?.provider) {
             console.log('Wallet connected:', wallet);
-            setWallets(wallet);
         }
     }, [wallet]);
 
@@ -50,25 +57,36 @@ export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
     }, [connect, connecting, wallet])
 
     const signer = ethersProvider?.getSigner();
-    const contractAddress = '0xC2d7B3Fa552c49cf4fb1d7FBD8c58cf41e34a5C8';
-    const contract = new ethers.Contract(contractAddress, SolidityCodeAgentABI, signer);
+    const contractAddress = process.env.NEXT_PUBLIC_SOLIDITY_CODE_AGENT_CONTRACT_ADDRESS ?? '';
+    console.log('contractAddress', contractAddress);
 
-    const runAgent = async (query: string, maxIterations: number) => {
-        const tx = await contract.runAgent(query, maxIterations);
+    const contract = useMemo(() => {
+        if (ethersProvider) {
+            return new ethers.Contract(contractAddress, SolidityCodeAgentABI, signer);
+        }
+    }, [contractAddress, ethersProvider, signer]);
+
+    const runAgent = useCallback(async (query: string, maxIterations: number) => {
+        const tx = await contract?.runAgent(query, maxIterations);
         const receipt = await tx.wait();
         const event = receipt.events?.find((event: { event: string; }) => event.event === 'AgentRunCreated');
         return event.args[1].toNumber();
-    };
+    }, [contract]);
 
-    const getMessageHistoryContents = async (agentId: number) => {
-        return await contract.getMessageHistoryContents(agentId);
-    };
+    const getMessageHistoryContents = useCallback(async (agentId: number) => {
+        return await contract?.getMessageHistoryContents(agentId);
+    }, [contract]);
 
-    const isRunFinished = async (runId: number) => {
-        return await contract.isRunFinished(runId);
-    };
+    const isRunFinished = useCallback(async (runId: number) => {
+        return await contract?.isRunFinished(runId);
+    }, [contract]);
 
     const handleRunAgent = useCallback(async () => {
+        if (!wallet?.provider) {
+            handleOpenErrorModal('Please connect your wallet');
+            return;
+        }
+
         const maxIterations = 2;
 
         const query = `
@@ -107,7 +125,13 @@ export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
             console.log('Run ID:', runId);
 
             let finished = false;
+            let messageIndex = 0;
+
             while (!finished) {
+                if (messageIndex < messages.length) {
+                    setProgressMessage(messages[messageIndex]);
+                    messageIndex++;
+                }
                 finished = await isRunFinished(runId);
                 console.log('Run finished:', finished);
                 await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -121,9 +145,10 @@ export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
         } finally {
             console.log('Agent run complete');
             setLoading(false);
+            setProgressMessage('');
         }
 
-    }, [code, getMessageHistoryContents, isRunFinished, runAgent]);
+    }, [code, getMessageHistoryContents, isRunFinished, messages, runAgent, wallet?.provider]);
 
 
     return {
@@ -136,5 +161,6 @@ export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
         handleCloseErrorModal,
         handleRunAgent,
         setError,
+        progressMessage,
     };
 }

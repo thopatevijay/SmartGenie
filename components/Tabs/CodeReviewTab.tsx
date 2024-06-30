@@ -19,6 +19,7 @@ export const CodeReviewTab: React.FC<CodeReviewTabProps> = () => {
         handleCloseErrorModal,
         handleRunAgent,
         setError,
+        progressMessage,
     } = useSolidityCodeAgentContract();
 
     const handleCodeChange = (value: any) => {
@@ -72,7 +73,7 @@ export const CodeReviewTab: React.FC<CodeReviewTabProps> = () => {
                 <div
                     className="flex-1 p-2 bg-darkfg text-neon border border-neon focus:outline-none"
                 >
-                    <SolidityEditor code={loading ? "Reviewing your code, hold tight ..." : suggestions ?? ''} />
+                    <SolidityEditor code={loading ? progressMessage : suggestions ?? ''} />
                 </div>
             </div>
             <ErrorModal isModalOpen={isErrorModalOpen} handleCloseModal={handleCloseErrorModal} errorMessage={error} />
