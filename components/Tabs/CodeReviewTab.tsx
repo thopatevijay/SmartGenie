@@ -3,6 +3,7 @@ import { SolidityEditor } from '../SolidityEditor';
 import { ErrorModal } from '../ErrorModal';
 import { CodeDiffModal } from '../CodeDiffModal';
 import { useSolidityCodeAgentContract } from '@/hooks';
+import { codeImprovementEditorDefaultValue, codeReviewEditorDefaultValue } from '../../utils/editorDefaultValues';
 
 interface CodeReviewTabProps {
 }
@@ -21,6 +22,7 @@ export const CodeReviewTab: React.FC<CodeReviewTabProps> = () => {
         setError,
         progressMessage,
         setSuggestions,
+        handleOpenErrorModal,
     } = useSolidityCodeAgentContract();
 
     const handleCodeChange = (value: any) => {
@@ -31,10 +33,6 @@ export const CodeReviewTab: React.FC<CodeReviewTabProps> = () => {
     const handleOutputCodeChange = (value: any) => {
         setError('');
         setSuggestions(value);
-    };
-
-    const handleOpenModal = () => {
-        setIsModalOpen(true);
     };
 
     const handleCloseModal = () => {
@@ -57,7 +55,7 @@ export const CodeReviewTab: React.FC<CodeReviewTabProps> = () => {
         const instructions = extractGenieInstructions(suggestions);
 
         if (instructions.length === 0) {
-            console.log('No @Genie instructions found in the code.');
+            handleOpenErrorModal('No @Genie instructions found in the code. Tag @Genie with your wishes, and watch the magic happen!');
             return;
         }
 
@@ -82,7 +80,11 @@ export const CodeReviewTab: React.FC<CodeReviewTabProps> = () => {
                 <div
                     className="flex-1 p-2 bg-darkfg text-neon border border-neon focus:outline-none"
                 >
-                    <SolidityEditor code={code} onChange={handleCodeChange} />
+                    <SolidityEditor
+                        code={code}
+                        onChange={handleCodeChange}
+                        defaultValue={codeReviewEditorDefaultValue}
+                    />
                 </div>
             </div>
 
@@ -99,14 +101,20 @@ export const CodeReviewTab: React.FC<CodeReviewTabProps> = () => {
                         </button> */}
                         <button className="px-4 py-2 bg-darkfg text-neon border border-neon"
                             onClick={handleImprovement}
-
-                        >Improve my code</button>
+                            disabled={loading}
+                        >
+                            {loading ? 'Loading...' : 'Improve my code'}
+                        </button>
                     </div>
                 </div>
                 <div
                     className="flex-1 p-2 bg-darkfg text-neon border border-neon focus:outline-none"
                 >
-                    <SolidityEditor code={loading ? progressMessage : suggestions ?? ''} onChange={handleOutputCodeChange} />
+                    <SolidityEditor
+                        code={loading ? progressMessage : suggestions ?? ''}
+                        onChange={handleOutputCodeChange}
+                        defaultValue={codeImprovementEditorDefaultValue}
+                    />
                 </div>
             </div>
             <ErrorModal isModalOpen={isErrorModalOpen} handleCloseModal={handleCloseErrorModal} errorMessage={error} />

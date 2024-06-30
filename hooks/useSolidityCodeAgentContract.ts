@@ -15,6 +15,7 @@ type UseSolidityCodeAgentContract = {
     setError: (error: string) => void;
     progressMessage: string;
     setSuggestions: (suggestions: string | null) => void;
+    handleOpenErrorModal: (message: string) => void;
 };
 
 export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
@@ -27,12 +28,19 @@ export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
     const [ethersProvider, setProvider] = useState<ethers.providers.Web3Provider | null>();
     const [progressMessage, setProgressMessage] = useState<string>('');
 
-    const messages = useMemo(() => [
+    const codeReviewMessages = useMemo(() => [
         'Analyzing your code...',
         'Identifying code improvement suggestions...',
         'Evaluating best coding practices...',
         'Inspecting for potential bugs...',
         'Optimizing gas usage...',
+    ], []);
+
+    const codeImprovementMessages = useMemo(() => [
+        'Reviewing your code...',
+        'Identifying areas for enhancement...',
+        'Making requested changes...',
+        'Finalizing the review...',
     ], []);
 
     const handleOpenErrorModal = (message: string) => {
@@ -119,7 +127,7 @@ export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
             `;
 
         const query = isImprovementPrompt ? codeImprovementQuery : codeReviewQuery;
-
+        const messages = isImprovementPrompt ? codeImprovementMessages : codeReviewMessages;
 
         setLoading(true);
         setError(null);
@@ -154,7 +162,7 @@ export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
             setProgressMessage('');
         }
 
-    }, [getMessageHistoryContents, isRunFinished, messages, runAgent, suggestions, wallet?.provider]);
+    }, [codeImprovementMessages, codeReviewMessages, getMessageHistoryContents, isRunFinished, runAgent, suggestions, wallet?.provider]);
 
 
     return {
@@ -169,5 +177,6 @@ export function useSolidityCodeAgentContract(): UseSolidityCodeAgentContract {
         setError,
         progressMessage,
         setSuggestions,
+        handleOpenErrorModal,
     };
 }
