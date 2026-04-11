@@ -43,6 +43,10 @@ In Project Name, we have integrated a sophisticated LLM Loops Agent that enhance
    - **code_interpreter**: Executes Solidity code snippets for analysis and validation.
 3. **Iterative Process**: The agent performs multiple iterations to refine responses and provide the most accurate and relevant suggestions.
 
+## Documentation
+
+- [System Design](./SYSTEM-DESIGN.md) — Architecture diagrams, on-chain agent loop, contract state machine, design decisions
+
 ## Links
 
 - **Live Project**: [Live Project Link](https://smart-genie.vercel.app/)
